@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>Магазин товаров</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light p-4">
+  <div class="container bg-white p-4 rounded shadow-sm">
+    
+    <div class="d-flex justify-content-between align-items-center mb-4">
+      <!-- Динамический заголовок страницы -->
+      <h2>{{ui.title}}</h2>
+      
+      <!-- Переключатель языков -->
+      <div class="btn-group" role="group">
+        <a href="/products?lang=eng" class="btn btn-outline-primary id-lang-eng">🇬🇧 ENG</a>
+        <a href="/products?lang=рус" class="btn btn-outline-primary id-lang-rus">🇷🇺 RUS</a>
+        <a href="/products?lang=uzb" class="btn btn-outline-primary id-lang-ozb">🇺🇿 UZB (Lotin)</a>
+        <a href="/products?lang=узб" class="btn btn-outline-primary id-lang-uzb">🇺🇿 УЗБ (Кирилл)</a>
+      </div>
+    </div>
+
+    <table class="table table-hover align-middle">
+      <thead class="table-dark">
+        <tr>
+          <th>{{ui.thId}}</th>
+          <th>{{ui.thName}}</th>
+          <th>{{ui.thDesc}}</th>
+          <th>{{ui.thPrice}}</th>
+          <th>{{ui.thQty}}</th>
+          <th>{{ui.thActions}}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {{#each products}}
+        <tr>
+          <td>{{this.id}}</td>
+          <td><strong>{{this.name}}</strong></td>
+          <td>{{this.description}}</td>
+          <td><span class="badge bg-success">${{this.price}}</span></td>
+          <!-- Использование ../ui позволяет выйти из цикла по товарам и прочитать переменную ui -->
+          <td>{{this.quantity}} {{../ui.unit}}</td>
+          <td>
+            <a href="/products/{{this.id}}/edit" class="btn btn-sm btn-warning">✏️ {{../ui.btnEdit}}</a>
+          </td>
+        </tr>
+        {{/each}}
+      </tbody>
+    </table>
+  </div>
+
+  <script>
+    const urlParams = new URLSearchParams(window.location.search);
+    const currentLang = urlParams.get('lang') || 'рус';
+    
+    if (currentLang === 'eng') document.querySelector('.id-lang-eng').classList.add('active');
+    if (currentLang === 'рус') document.querySelector('.id-lang-rus').classList.add('active');
+    if (currentLang === 'uzb') document.querySelector('.id-lang-ozb').classList.add('active');
+    if (currentLang === 'узб') document.querySelector('.id-lang-uzb').classList.add('active');
+  </script>
+</body>
+</html>
