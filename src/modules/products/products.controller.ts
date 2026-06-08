@@ -83,7 +83,7 @@ export class ProductsController {
       },
     };
 
-    const ui = translations[lang] || translations['русский'];
+    const ui = translations[lang] || translations['рус'];
 
     return {
       products: localizedProducts,
@@ -123,7 +123,7 @@ export class ProductsController {
   @Get(':id/client')
   async getProductForClient(
     @Param('id', ParseIntPipe) id: number,
-    @Query('lang') lang: string = 'русский',
+    @Query('lang') lang: string = 'рус',
   ) {
     const result = await this.service.getOne(id);
     const product = result.data;
