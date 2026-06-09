@@ -39,6 +39,25 @@ export class AuthService {
   //   };
   // }
 
+  async googleAuth(user: any) {
+    const googleId = user?.id;
+
+    let existing = await this.prisma.user.findFirst({ where: { googleId }})
+
+    if(!existing) {
+      existing = await this.prisma.user.create({
+        data: {
+          name: user?.displayName,
+          email: user.emails?.[0]?.value
+        }
+      })
+    }
+
+    return {
+      user: existing
+    }
+  }
+
   async validateUser(email: string, password: string): Promise<any> {
     const user = { id: 1, email: email };
     return user;

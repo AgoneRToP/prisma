@@ -11,4 +11,6 @@ const red = () => {
 };
 
 hoistedFunc();
-function hoistedFunc() { console.log("Ishladi"); }
+function hoistedFunc() {
+  console.log('Ishladi');
+}

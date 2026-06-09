@@ -9,21 +9,27 @@ datasource db {
 }
 
 model Product {
-  id          Int     @id @default(autoincrement())
-  name        Json    @unique @db.JsonB
-  description Json?   @db.JsonB
-  price       Decimal @db.Decimal(10, 2)
-  quantity    Int     @default(0) @db.SmallInt
+  id          Int      @id @default(autoincrement())
+  name        Json     @unique @db.JsonB
+  description Json?    @db.JsonB
+  price       Decimal  @db.Decimal(10, 2)
+  quantity    Int      @default(0) @db.SmallInt
   // countryCode String  @map("country_code") @db.Char(2)
+  createdAt   DateTime @default(now()) @db.Timestamp()
+  updatedAt   DateTime @default(now()) @updatedAt @db.Timestamp()
 
   @@map("products")
 }
 
 model User {
-  id       Int    @default(autoincrement())
-  age      Int    @db.SmallInt
-  email    String @unique @db.VarChar(255)
-  password String @db.VarChar(255)
+  id        Int      @default(autoincrement())
+  name      String   @db.VarChar(255)
+  age       Int?     @db.SmallInt
+  email     String   @unique @db.VarChar(255)
+  password  String?  @db.VarChar(255)
+  googleId  String?  @db.VarChar()
+  createdAt DateTime @default(now()) @db.Timestamp()
+  updatedAt DateTime @default(now()) @updatedAt @db.Timestamp()
 
   @@id([id])
   @@map("users")
