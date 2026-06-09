@@ -18,3 +18,13 @@ model Product {
 
   @@map("products")
 }
+
+model User {
+  id       Int    @default(autoincrement())
+  age      Int    @db.SmallInt
+  email    String @unique @db.VarChar(255)
+  password String @db.VarChar(255)
+
+  @@id([id])
+  @@map("users")
+}
