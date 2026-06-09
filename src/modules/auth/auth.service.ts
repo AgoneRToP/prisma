@@ -1,10 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { ConflictException, Injectable } from '@nestjs/common';
 import { PrismaService } from '../../prisma/prisma.service';
 import { RegisterDto } from './dtos/register.dto';
+import { JwtService } from '@nestjs/jwt';
+import bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwtService: JwtService,
+  ) {}
 
   async register(payload: RegisterDto): Promise<any> {
     const existing = await this.prisma.user.findUnique({
@@ -14,52 +19,92 @@ export class AuthService {
     });
 
     if (existing) {
-      throw new Error('User already exists');
+      throw new ConflictException('User with this email already exists');
     }
 
-    const data = await this.prisma.user.create({
+    const hashedPassword = await bcrypt.hash(payload.password, 10);
+
+    const user = await this.prisma.user.create({
       data: {
         name: payload.name,
         age: payload.age,
         email: payload.email.toLowerCase(),
-        password: payload.password,
+        password: hashedPassword,
       },
     });
 
+    const { password, ...result } = user;
+
     return {
       success: true,
-      data,
+      data: user,
     };
   }
 
-  // async login(user: any) {
-  //   const payload = { username: user.username, sub: user.userId };
-  //   return {
-  //     access_token: this.jwtService.sign(payload),
-  //   };
-  // }
-
-  async googleAuth(user: any) {
-    const googleId = user?.id;
-
-    let existing = await this.prisma.user.findFirst({ where: { googleId }})
-
-    if(!existing) {
-      existing = await this.prisma.user.create({
-        data: {
-          name: user?.displayName,
-          email: user.emails?.[0]?.value
-        }
-      })
-    }
+  async login(user: any) {
+    const payload = {
+      email: user.email,
+      sub: user.id || user.userId,
+    };
 
     return {
-      user: existing
-    }
+      success: true,
+      access_token: this.jwtService.sign(payload),
+      user: {
+        id: user.id || user.userId,
+        email: user.email,
+        name: user.name,
+      },
+    };
   }
 
-  async validateUser(email: string, password: string): Promise<any> {
-    const user = { id: 1, email: email };
-    return user;
+  async googleAuth(user:{email:string,name:string}) {
+
+    let existing = await this.prisma.user.upsert({
+      where:{email:user.email},
+      update:{},
+      create:{
+        email:user.email,
+        name:user.name
+      }
+    });
+
+    const {password: _, ...res} = existing
+    return res
+    // if (!existing) {
+    //   existing = await this.prisma.user.create({
+    //     data: {
+    //       name: user?.displayName,
+    //       email: user.emails?.[0]?.value,
+    //     },
+    //   });
+    // }
+
+  
+  }
+
+  async validateUser(email: string, pass: string): Promise<any> {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        email: email.toLowerCase(),
+      },
+    });
+
+    if (!user) {
+      return null;
+    }
+
+    if (!user.password) {
+      return null;
+    }
+
+    const isMatch = await bcrypt.compare(pass, user.password);
+
+    if (isMatch) {
+      const { password, ...result } = user;
+      return result;
+    }
+
+    return null;
   }
 }

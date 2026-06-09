@@ -5,9 +5,17 @@ import { AuthService } from './auth.service';
 import { LocalStrategy } from './strategies/local.strategy';
 import { PassportModule } from '@nestjs/passport';
 import { GoogleStrategy } from './strategies/google.strategy';
+import { JwtModule } from '@nestjs/jwt';
 
 @Module({
-  imports: [PrismaModule, PassportModule],
+  imports: [
+    PrismaModule,
+    PassportModule,
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || 'SUPER_SECRET_KEY',
+      signOptions: { expiresIn: '1d' },
+    }),
+  ],
   controllers: [AuthController],
   providers: [AuthService, LocalStrategy, GoogleStrategy],
 })
