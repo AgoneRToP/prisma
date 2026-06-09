@@ -51,6 +51,6 @@ export class AuthController {
   async googleCallback(@Req() req: any, @Res() res: Response) {
     const response = await this.service.googleAuth(req.user);
 
-    res.redirect('/products');
+    res.redirect('/products?lang=eng');
   }
 }

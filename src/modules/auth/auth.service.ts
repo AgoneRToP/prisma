@@ -58,19 +58,18 @@ export class AuthService {
     };
   }
 
-  async googleAuth(user:{email:string,name:string}) {
-
+  async googleAuth(user: { email: string; name: string }) {
     let existing = await this.prisma.user.upsert({
-      where:{email:user.email},
-      update:{},
-      create:{
-        email:user.email,
-        name:user.name
-      }
+      where: { email: user.email },
+      update: {},
+      create: {
+        email: user.email,
+        name: user.name,
+      },
     });
 
-    const {password: _, ...res} = existing
-    return res
+    const { password: _, ...res } = existing;
+    return res;
     // if (!existing) {
     //   existing = await this.prisma.user.create({
     //     data: {
@@ -79,8 +78,6 @@ export class AuthService {
     //     },
     //   });
     // }
-
-  
   }
 
   async validateUser(email: string, pass: string): Promise<any> {
