@@ -70,14 +70,6 @@ export class AuthService {
 
     const { password: _, ...res } = existing;
     return res;
-    // if (!existing) {
-    //   existing = await this.prisma.user.create({
-    //     data: {
-    //       name: user?.displayName,
-    //       email: user.emails?.[0]?.value,
-    //     },
-    //   });
-    // }
   }
 
   async validateUser(email: string, pass: string): Promise<any> {

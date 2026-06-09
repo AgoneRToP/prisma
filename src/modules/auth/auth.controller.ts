@@ -39,7 +39,7 @@ export class AuthController {
   @UseGuards(LocalAuthGuard)
   @Post('login')
   async login(@Req() req: any, @Body() payload: LoginDto) {
-    return this.service.login(req.user); 
+    return this.service.login(req.user);
   }
 
   @UseGuards(GoogleAuthGuard)
@@ -51,6 +51,6 @@ export class AuthController {
   async googleCallback(@Req() req: any, @Res() res: Response) {
     const response = await this.service.googleAuth(req.user);
 
-    res.redirect('/products?lang=eng');
+    res.redirect('/products?lang=рус');
   }
 }
