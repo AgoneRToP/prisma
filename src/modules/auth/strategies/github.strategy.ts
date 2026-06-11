@@ -7,9 +7,10 @@ import { Strategy } from 'passport-github2';
 export class GithubStrategy extends PassportStrategy(Strategy, 'github') {
   constructor(private readonly config: ConfigService) {
     super({
-      clientID: config.get<string>('GITHUB_CLIENT_ID'),
-      clientSecret: config.get<string>('GITHUB_CLIENT_SECRET'),
-      callbackURL: config.get<string>('GITHUB_CALLBACK_URL'),
+      clientID: config.get<string>('GITHUB_CLIENT_ID')!,
+      clientSecret: config.get<string>('GITHUB_CLIENT_SECRET')!,
+      callbackURL: config.get<string>('GITHUB_CALLBACK_URL')!,
+      scope: ['email', 'profile'],
     });
   }
 

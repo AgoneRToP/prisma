@@ -72,6 +72,20 @@ export class AuthService {
     return res;
   }
 
+  async githubAuth(user: { email: string; name: string }) {
+    let existing = await this.prisma.user.upsert({
+      where: { email: user.email },
+      update: {},
+      create: {
+        email: user.email,
+        name: user.name,
+      },
+    });
+
+    const { password: _, ...res } = existing;
+    return res;
+  }
+
   async validateUser(email: string, pass: string): Promise<any> {
     const user = await this.prisma.user.findUnique({
       where: {

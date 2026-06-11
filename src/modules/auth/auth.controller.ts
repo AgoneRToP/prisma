@@ -14,6 +14,7 @@ import { LocalAuthGuard } from './guards/local.guard';
 import { GoogleAuthGuard } from './guards/google.guard';
 import { LoginDto } from './dtos/login.dto';
 import type { Response } from 'express';
+import { GithubAuthGuard } from './guards/github.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -50,6 +51,18 @@ export class AuthController {
   @Get('/google/callback')
   async googleCallback(@Req() req: any, @Res() res: Response) {
     const response = await this.service.googleAuth(req.user);
+
+    res.redirect('/products?lang=рус');
+  }
+
+  @UseGuards(GithubAuthGuard)
+  @Get('/github')
+  async github() {}
+
+  @UseGuards(GithubAuthGuard)
+  @Get('/github/callback')
+  async githubCallback(@Req() req: any, @Res() res: Response) {
+    const response = await this.service.githubAuth(req.user);
 
     res.redirect('/products?lang=рус');
   }
